@@ -1,4 +1,6 @@
 class Movie < ApplicationRecord
+  belongs_to :user, optional: true
+  
   validates :title, presence: true
   validates :release_at, presence: true
   validates :director, presence: true

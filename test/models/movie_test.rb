@@ -40,4 +40,15 @@ class MovieTest < ActiveSupport::TestCase
     movie = build(:movie)
     assert movie.valid?, "Factory is not valid"
   end
+
+  test "should belong to user" do
+    user = create(:user)
+    movie = create(:movie, user: user)
+    assert_equal user, movie.user
+  end
+
+  test "should be public if no user is associated" do
+    movie = create(:movie, user: nil)
+    assert_nil movie.user, "Movie should be public"
+  end
 end

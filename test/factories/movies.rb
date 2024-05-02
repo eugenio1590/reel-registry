@@ -6,5 +6,6 @@ FactoryBot.define do
     genre { Faker::Book.genre }
     synopsis { Faker::Lorem.paragraph(sentence_count: 2) }
     duration { Faker::Number.between(from: 60, to: 240) }
+    association :user
   end
 end
