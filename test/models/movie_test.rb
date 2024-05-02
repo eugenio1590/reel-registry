@@ -51,4 +51,25 @@ class MovieTest < ActiveSupport::TestCase
     movie = create(:movie, user: nil)
     assert_nil movie.user, "Movie should be public"
   end
+
+  test "should return 'shared' movies" do
+    shared_movie = create(:movie, user: nil)
+    user_movie = create(:movie)
+
+    shared_movies = Movie.shared
+
+    assert_includes shared_movies, shared_movie
+    refute_includes shared_movies, user_movie
+  end
+
+  test "should return user-'owned' movies" do
+    user = create(:user)
+    user_movie = create(:movie, user: user)
+    other_user_movie = create(:movie)
+
+    owned_movies = Movie.owned(user)
+
+    assert_includes owned_movies, user_movie
+    refute_includes owned_movies, other_user_movie
+  end
 end
