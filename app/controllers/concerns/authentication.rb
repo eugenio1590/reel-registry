@@ -1,6 +1,8 @@
 module Authentication
   extend ActiveSupport::Concern
 
+  attr_reader :current_user
+
   included do
     before_action :authenticate_request
   end
