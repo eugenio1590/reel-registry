@@ -16,6 +16,16 @@ class UserTest < ActiveSupport::TestCase
     assert_includes user.errors[:email], "is not a valid email format"
   end
 
+  test "should have unique email" do
+    existing_user = create(:user, email: "test@example.com")
+
+    duplicate_user = build(:user, email: "test@example.com")
+
+    assert_equal existing_user.email, duplicate_user.email
+    assert_not duplicate_user.valid?
+    assert_includes duplicate_user.errors[:email], "has already been taken"
+  end
+
   # Password validation
 
   test "should require a password" do
