@@ -2,9 +2,11 @@ ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
 require "factory_bot"
+require "auth_token"
 
 class ActiveSupport::TestCase
   include FactoryBot::Syntax::Methods
+  include AuthToken
   
   # Run tests in parallel with specified workers
   parallelize(workers: :number_of_processors)
