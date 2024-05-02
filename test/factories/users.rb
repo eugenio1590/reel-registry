@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :user do
-    email { Faker::Internet.email }
+    sequence(:email) { |n| "#{n}_#{Faker::Internet.email}" }
     password { "ValidPassword!" }
 
     trait :invalid_email do

@@ -64,4 +64,13 @@ class UserTest < ActiveSupport::TestCase
     user = build(:user)
     assert user.valid?
   end
+
+  test "should encrypt the password after creating" do
+    password = "ValidPassword!"
+    
+    user = create(:user, password: password)
+
+    assert_not_equal password, user.password_digest
+    assert user.authenticate(password)
+  end
 end

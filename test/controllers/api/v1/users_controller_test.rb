@@ -3,7 +3,8 @@ require "test_helper"
 class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   test "should create user" do
     assert_difference('User.count') do
-      post api_v1_users_url, params: build(:user).as_json, as: :json
+      user = build(:user)
+      post api_v1_users_url, params: { email: user.email, password: user.password }, as: :json
     end
 
     assert_response :created
@@ -11,7 +12,8 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should return errors if user creation fails" do
-    post api_v1_users_url, params: build(:user, :invalid_email, :short_password).as_json, as: :json
+    user = build(:user, :invalid_email, :short_password)
+    post api_v1_users_url, params: { email: user.email, password: user.password }, as: :json
 
     assert_response :unprocessable_entity
     assert_includes JSON.parse(response.body)["errors"], "Email is not a valid email format"
