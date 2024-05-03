@@ -99,4 +99,29 @@ class Api::V1::MoviesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
   end
+
+  test "should delete a movie belonging to a user" do
+    @movie = @user_movies.first
+
+    delete api_v1_movie_url(@movie), params: @movie.attributes, headers: @headers
+
+    assert_response :no_content
+  end
+
+  test "should not delete a shared movie" do
+    @movie = @shared_movies.first
+
+    delete api_v1_movie_url(@movie), params: @movie.attributes, headers: @headers
+
+    assert_response :forbidden
+    assert_not_nil JSON.parse(response.body)["errors"]
+  end
+
+  test "should not delete a movie for another user" do
+    @movie = create(:movie, user_id: create(:user).id)
+
+    delete api_v1_movie_url(@movie), params: @movie.attributes, headers: @headers
+
+    assert_response :not_found
+  end
 end

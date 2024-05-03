@@ -39,6 +39,17 @@ class Api::V1::MoviesController < ApplicationController
     head :not_found
   end
 
+  def destroy
+    movie = policy_scope(Movie).find(params[:id])
+    authorize movie
+    movie.destroy
+    head :no_content
+  rescue ActiveRecord::RecordNotFound
+    head :not_found
+  rescue Pundit::NotAuthorizedError
+    render json: { errors: ["not allowed to delete this movie"] }, status: :forbidden
+  end
+
   private
 
   def movie_params
