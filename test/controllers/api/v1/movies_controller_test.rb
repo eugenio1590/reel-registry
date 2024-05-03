@@ -3,7 +3,7 @@ require "test_helper"
 class Api::V1::MoviesControllerTest < ActionDispatch::IntegrationTest
   def setup
     @user = create(:user)
-    @token = generate_auth_token(@user)
+    @token = generate_auth_token(@user.id)
     @headers = { 'Authorization' => "Bearer #{@token}" }
     @user_movies = create_list(:movie, 3, user: @user)
     @shared_movies = create_list(:movie, 3, user: nil)

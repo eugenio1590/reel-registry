@@ -1,5 +1,6 @@
 module Authentication
   extend ActiveSupport::Concern
+  include AuthToken
 
   attr_reader :current_user
 
@@ -9,7 +10,7 @@ module Authentication
 
   def authenticate_request
     token = request.headers['Authorization']&.split(' ')&.last
-    unless token && decoded_token = decode_token(token)
+    unless token && decoded_token = parse_auth_token(token)
       render json: { error: 'Not authorized' }, status: :unauthorized
       return
     end
@@ -17,11 +18,5 @@ module Authentication
     @current_user = User.find(decoded_token['user_id'])
   rescue JWT::DecodeError
     render json: { error: 'Invalid auth token' }, status: :unauthorized
-  end
-
-  private
-
-  def decode_token(token)
-    JWT.decode(token, Rails.application.secrets.secret_key_base)&.first
   end
 end

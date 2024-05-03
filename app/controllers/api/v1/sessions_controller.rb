@@ -7,10 +7,10 @@ class Api::V1::SessionsController < ApplicationController
     return render json: { error: "The email provided is not registered" }, status: :unprocessable_entity if user.blank?
 
     if user.authenticate(params[:password])
-      auth_token = generate_auth_token(user)
+      auth_token = generate_auth_token(user.id)
       render json: Api::V1::UserSerializer.new(user, meta: { auth_token: auth_token }).serializable_hash
     else
-      render json: { error: 'Invalid credentials' }, status: :unauthorized
+      render json: { errors: [ 'Invalid credentials' ] }, status: :unauthorized
     end
   end
 end
