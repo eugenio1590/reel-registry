@@ -27,6 +27,18 @@ class Api::V1::MoviesController < ApplicationController
     render json: { errors: ["not allowed to create this movie"] }, status: :forbidden
   end
 
+  def update
+    movie = policy_scope(Movie).find(params[:id])
+    authorize movie
+    if movie.update(movie_params)
+      render json: Api::V1::MovieSerializer.new(movie).serializable_hash
+    else
+      render json: { errors: movie.errors.full_messages }, status: :unprocessable_entity
+    end
+  rescue ActiveRecord::RecordNotFound
+    head :not_found
+  end
+
   private
 
   def movie_params

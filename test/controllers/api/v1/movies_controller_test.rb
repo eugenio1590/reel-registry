@@ -65,10 +65,38 @@ class Api::V1::MoviesControllerTest < ActionDispatch::IntegrationTest
 
   test "should not create a movie for another user" do
     assert_no_difference('Movie.count') do
-      post api_v1_movies_url, params: attributes_for(:movie, user_id: create(:user).id),  headers: @headers
+      post api_v1_movies_url, params: attributes_for(:movie, user_id: create(:user).id), headers: @headers
     end
 
     assert_response :forbidden
     assert_not_nil JSON.parse(response.body)["errors"]
+  end
+
+  test "should update a movie belonging to a user with valid parameters" do
+    @movie = @user_movies.first
+    @movie.title = "updated title"
+
+    patch api_v1_movie_url(@movie), params: @movie.attributes, headers: @headers
+
+    assert_response :ok
+  end
+
+  test "should not update a movie with invalid parameters" do
+    @movie = @user_movies.first
+    @movie.title = nil
+
+    patch api_v1_movie_url(@movie), params: @movie.attributes, headers: @headers
+
+    assert_response :unprocessable_entity
+    assert_not_nil JSON.parse(response.body)["errors"]
+  end
+
+  test "should not update a movie for another user" do
+    @movie = create(:movie, user_id: create(:user).id)
+    @movie.title = "updated title"
+
+    patch api_v1_movie_url(@movie), params: @movie.attributes, headers: @headers
+
+    assert_response :not_found
   end
 end
