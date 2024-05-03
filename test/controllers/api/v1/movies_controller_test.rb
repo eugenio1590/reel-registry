@@ -9,10 +9,22 @@ class Api::V1::MoviesControllerTest < ActionDispatch::IntegrationTest
     @shared_movies = create_list(:movie, 3, user: nil)
   end
 
-  test "should return the movie list of the user and those of public access" do
+  test "should return the movie list belonging to a user and those of shared access" do
     get api_v1_movies_url, headers: @headers
     assert_response :success
-    assert_equal @user_movies.count + @shared_movies.count,  JSON.parse(response.body)["data"].size
+    assert_equal @user_movies.count + @shared_movies.count, JSON.parse(response.body)["data"].size
+  end
+
+  test "should return the movie list belonging to a user" do
+    get api_v1_movies_url(filter: 'owned'), headers: @headers
+    assert_response :success
+    assert_equal @user_movies.count, JSON.parse(response.body)["data"].size
+  end
+
+  test "should return the shared movie list" do
+    get api_v1_movies_url(filter: 'shared'), headers: @headers
+    assert_response :success
+    assert_equal @shared_movies.count, JSON.parse(response.body)["data"].size
   end
 
   test "should return the movie information belonging to a user" do
