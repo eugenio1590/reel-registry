@@ -34,4 +34,41 @@ class Api::V1::MoviesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_movie_url(@movie), headers: @headers
     assert_response :not_found
   end
+
+  test "should create a shared movie with valid parameters" do
+    assert_difference('Movie.count') do
+      post api_v1_movies_url, params: attributes_for(:movie), headers: @headers
+    end
+
+    assert_response :created
+    assert_not_nil JSON.parse(response.body)["data"]
+  end
+
+  test "should create a movie belonging to a user with valid parameters" do
+    assert_difference('Movie.count') do
+      post api_v1_movies_url, params: attributes_for(:movie, user_id: @user.id),  headers: @headers
+    end
+
+    assert_response :created
+    assert_not_nil JSON.parse(response.body)["data"]
+    assert_equal @user_movies.count + 1, @user.movies.count
+  end
+
+  test "should not create a movie with invalid parameters" do
+    assert_no_difference('Movie.count') do
+      post api_v1_movies_url, params: attributes_for(:movie, title: nil), headers: @headers
+    end
+
+    assert_response :unprocessable_entity
+    assert_not_nil JSON.parse(response.body)["errors"]
+  end
+
+  test "should not create a movie for another user" do
+    assert_no_difference('Movie.count') do
+      post api_v1_movies_url, params: attributes_for(:movie, user_id: create(:user).id),  headers: @headers
+    end
+
+    assert_response :forbidden
+    assert_not_nil JSON.parse(response.body)["errors"]
+  end
 end

@@ -9,7 +9,7 @@ class MoviePolicy < ApplicationPolicy
   end
 
   def create?
-    true
+    record.user.blank? || record.user == user
   end
 
   def update?

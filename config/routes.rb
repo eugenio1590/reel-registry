@@ -7,7 +7,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :sessions, only: [:create]
       resources :users, only: [:create]
-      resources :movies, only: [:index, :show]
+      resources :movies, only: [:index, :show, :create]
     end
   end
 end

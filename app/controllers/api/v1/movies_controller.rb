@@ -14,4 +14,22 @@ class Api::V1::MoviesController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     head :not_found
   end
+
+  def create
+    movie = Movie.new(movie_params)
+    authorize movie
+    if movie.save
+      render json: Api::V1::MovieSerializer.new(movie).serializable_hash, status: :created
+    else
+      render json: { errors: movie.errors.full_messages }, status: :unprocessable_entity
+    end
+  rescue Pundit::NotAuthorizedError
+    render json: { errors: ["not allowed to create this movie"] }, status: :forbidden
+  end
+
+  private
+
+  def movie_params
+    params.permit(:title, :release_at, :director, :genre, :synopsis, :duration, :user_id)
+  end
 end

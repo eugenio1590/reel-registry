@@ -27,7 +27,11 @@ class MoviePolicyTest < ActiveSupport::TestCase
   end
 
   test "user can create a movie" do
-    assert MoviePolicy.new(@user, Movie).create?
+    assert MoviePolicy.new(@user, @user_movie).create?
+  end
+
+  test "user cannot create other user's movie" do
+    refute MoviePolicy.new(@user, @other_user_movie).create?
   end
 
   test "user can update own movie" do
