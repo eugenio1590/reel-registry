@@ -8,8 +8,8 @@ class Api::V1::SessionsControllerTest < ActionDispatch::IntegrationTest
     post api_v1_sessions_url, params: { email: user.email, password: password }, as: :json
 
     assert_response :success
-    assert_not_nil JSON.parse(response.body)["auth_token"]
-    assert_equal user.email, JSON.parse(response.body)["email"]
+    assert_not_nil JSON.parse(response.body)["data"]
+    assert_not_nil JSON.parse(response.body)["meta"]["auth_token"]
   end
 
   test "should return unauthorized if credentials are invalid" do

@@ -8,7 +8,7 @@ class Api::V1::SessionsController < ApplicationController
 
     if user.authenticate(params[:password])
       auth_token = generate_auth_token(user)
-      render json: user, auth_token: auth_token
+      render json: Api::V1::UserSerializer.new(user, meta: { auth_token: auth_token }).serializable_hash
     else
       render json: { error: 'Invalid credentials' }, status: :unauthorized
     end
