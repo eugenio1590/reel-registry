@@ -1,6 +1,4 @@
-class Api::V1::MoviesController < ApplicationController
-  include Authentication
-  include Pagination
+class Api::V1::MoviesController < Api::V1::BaseController
 
   before_action :set_movie, only: [:show, :update, :destroy]
 
